@@ -1,0 +1,31 @@
+class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  AuthBloc() : super(AuthInitial()) {
+    on<AuthEvent>((event, emit) async {
+      //Event Login User
+      if (event is AuthLogin) {
+        try {
+          emit(AuthLoading());
+
+          final user = await AuthService().login(event.data);
+
+          emit(AuthSuccess(user));
+        } catch (e) {
+          emit(AuthFailure(e.toString()));
+        }
+      }
+
+      //Event Get Current User
+      if (event is AuthGetCurentUser) {
+        try {
+          //Inisialisasi Loading
+          emit(AuthLoading());
+          final LoginModel data = await SharedMethod().getCredentialUser();
+          final UserModel user = await AuthService().login(data);
+          emit(AuthSuccess(user));
+        } catch (e) {
+          emit(AuthFailure(e.toString()));
+        }
+      }
+    });
+  }
+}

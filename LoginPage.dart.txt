@@ -1,0 +1,231 @@
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final emailController = TextEditingController(text: '');
+  final passwordController = TextEditingController(text: '');
+
+  bool validate() {
+    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: CustomColor.oceanColor,
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          print('State :' + state.toString());
+
+          if (state is AuthFailure) {
+            SnackbarComponent.showSnackbar(
+              context,
+              "Login failed",
+              state.errorMsg,
+              image: ImagesConstant.iconFailed,
+              backgroundColor: CustomColor.redColor,
+              iconColor: CustomColor.whiteColor,
+            );
+          }
+
+          if (state is AuthSuccess) {
+            final user = state.user;
+
+            if (user.role == '1') {
+              final navigator = Navigator.maybeOf(context);
+
+              if (navigator != null) {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/admin-page', (route) => false);
+              }
+            } else if (user.role == '2') {
+              final navigator = Navigator.maybeOf(context);
+
+              if (navigator != null) {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/marketing-page', (route) => false);
+              }
+            } else if (user.role == '3') {
+              final navigator = Navigator.maybeOf(context);
+
+              if (navigator != null) {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/engineer-page', (route) => false);
+              }
+            } else if (user.role == '4') {
+              final navigator = Navigator.maybeOf(context);
+
+              if (navigator != null) {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/ppic-page', (route) => false);
+              }
+            } else if (user.role == '5') {
+              final navigator = Navigator.maybeOf(context);
+
+              if (navigator != null) {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/produksi-page', (route) => false);
+              }
+            } else if (user.role == '6') {
+              final navigator = Navigator.maybeOf(context);
+
+              if (navigator != null) {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/warehouse-page', (route) => false);
+              }
+            } else if (user.role == '7') {
+              final navigator = Navigator.maybeOf(context);
+
+              if (navigator != null) {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/operator-page', (route) => false);
+              }
+            }
+          }
+        },
+        builder: (context, state) {
+          if (state is AuthLoading) {
+            return const Center(
+              child: Loading(
+                size: 50,
+                lineWidth: 5,
+              ),
+            );
+          }
+
+          return SafeArea(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.35,
+                    margin: const EdgeInsets.only(bottom: 48),
+                    padding: const EdgeInsets.all(40),
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      ),
+                      color: CustomColor.whiteColor,
+                    ),
+                    child: Row(
+                      children: [
+                        const DefaultImageAsset(
+                          defaultImagePath: ImagesConstant.logoOcean,
+                          width: 79,
+                          height: 72,
+                        ),
+                        const SizedBox(width: 12),
+                        Container(
+                          margin: const EdgeInsets.only(top: 75),
+                          child: const Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomText(
+                                'Login untuk',
+                                fontSize: 20,
+                                isBold: true,
+                              ),
+                              CustomText(
+                                'Menggunakan sistem',
+                                fontSize: 20,
+                                isBold: true,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const CustomText(
+                          'Username',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: CustomColor.whiteColor,
+                        ),
+                        DefaultTextInput(
+                          padding: const EdgeInsets.only(top: 9),
+                          image: ImagesConstant.email,
+                          placeholder: 'Email / Username',
+                          iconColor: CustomColor.oceanColor,
+                          color: CustomColor.whiteColor,
+                          textController: emailController,
+                          inputType: TextInputType.emailAddress,
+                        ),
+                        const SizedBox(height: 17),
+                        const CustomText(
+                          'Password',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: CustomColor.whiteColor,
+                        ),
+                        DefaultTextInput(
+                          padding: const EdgeInsets.only(top: 9),
+                          image: ImagesConstant.password,
+                          placeholder: 'Password',
+                          iconColor: CustomColor.oceanColor,
+                          color: CustomColor.whiteColor,
+                          suffixIcon: ImagesConstant.eyeOpen,
+                          textController: passwordController,
+                          inputType: TextInputType.text,
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: DefaultButton(
+                            text: 'Login',
+                            height: 55,
+                            width: 170,
+                            onButtonPressed: () {
+                              if (validate()) {
+                                context.read<AuthBloc>().add(
+                                      AuthLogin(
+                                        LoginModel(
+                                          email: emailController.text.trim(),
+                                          password:
+                                              passwordController.text.trim(),
+                                        ),
+                                      ),
+                                    );
+                              } else {
+                                SnackbarComponent.showSnackbar(
+                                    context,
+                                    "Field can't empty",
+                                    "Please fill out all fields",
+                                    backgroundColor: CustomColor.redColor,
+                                    iconColor: CustomColor.whiteColor);
+                              }
+                            },
+                            paddingTop: 40,
+                            paddingBottom: 0,
+                            paddingLeft: 0,
+                            paddingRight: 0,
+                            color: CustomColor.sandColor,
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}

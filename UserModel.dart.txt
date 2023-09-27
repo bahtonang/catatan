@@ -1,0 +1,40 @@
+class UserModel {
+  final String? email;
+  final String? fullName;
+  final String? whatsappNumber;
+  final String? role;
+  final String? password;
+  final String? token;
+
+  UserModel({
+    this.email,
+    this.fullName,
+    this.whatsappNumber,
+    this.role,
+    this.password,
+    this.token,
+  });
+
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+        email: json['email'],
+        fullName: json['full_name'],
+        whatsappNumber: json['no_wa'],
+        role: json['role'],
+        password: json['password'],
+        token: json['token'],
+      );
+
+  UserModel copyWith({
+    String? editEmail,
+    String? editFullName,
+    String? editWhatsapp,
+    String? editPassword,
+  }) =>
+      UserModel(
+        email: editEmail ?? email,
+        fullName: editFullName ?? fullName,
+        whatsappNumber: editWhatsapp ?? whatsappNumber,
+        password: editPassword ?? password,
+        token: token,
+      );
+}
