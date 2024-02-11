@@ -1,0 +1,1106 @@
+<?php
+
+namespace App\Controllers;
+use App\Models\ModelDua;
+use App\Models\ModelSatu;
+use App\Models\ModelTiga;
+use CodeIgniter\HTTP\Response;
+use CodeIgniter\HTTP\ResponseInterface;
+use Exception;
+
+class Api extends BaseController
+{
+
+    public function getVersi()
+    {
+        try {
+
+            $model = new ModelSatu();
+            $versi = $model->versi();
+
+            if ($versi) {
+
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $versi,
+                    ]
+                );
+
+            } else {
+                return $this->response->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find versi',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+
+    }
+
+    public function updatePassword()
+    {
+        $pid = $this->request->getVar('pid');
+        $pass = $this->request->getVar('pass');
+        $ibu = $this->request->getVar('ibu');
+
+        try {
+
+            $rules = [
+                'pid' => 'required',
+                'ibu' => 'required',
+                'pass' => 'required',
+            ];
+
+            $errors = [
+                'pid' => [
+                    'validateUser' => 'Invalid login credentials provided',
+                ],
+            ];
+
+            $input = $this->getRequestInput($this->request);
+
+            if (!$this->validateRequest($input, $rules, $errors)) {
+                return $this
+                    ->getResponse(
+                        $this->validator->getErrors(),
+                        ResponseInterface::HTTP_BAD_REQUEST
+                    );
+            } else {
+
+                $model = new ModelSatu();
+                $update = $model->updatepass($pid, $ibu, $pass);
+                if ($update>0) {
+                    return $this
+                        ->getResponse(
+                            [
+				'error' => false,
+                                'message' => 'Success',
+                            ]
+                        );
+
+                } else {
+                    return $this
+                        ->getResponse(
+                            [
+				'error' => true,
+                                'message' => 'error',
+                            ]
+                        );
+                }
+            }
+        } catch (Exception $exception) {
+            return $this
+                ->getResponse(
+                    [
+                        'error' => true,
+                        'message' => $exception->getMessage(),
+                    ],
+
+                );
+        }
+    }
+
+    public function getAbsen($pid, $tahun)
+    {
+        try {
+
+            $model = new ModelSatu();
+            $data = $model->absen($pid, $tahun);
+
+            if ($data) {
+
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $data,
+                    ]
+                );
+
+            } else {
+                return $this->response->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find absen',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+
+    }
+
+  public function getTeknisi($gedung,$kodebagian)
+  {
+    try {
+
+        $model = new ModelSatu();
+        $data = $model->teknisi($gedung, $kodebagian);
+
+        if ($data) {
+
+            return $this->getResponse(
+                [
+                    'status' => 'success',
+                    'data' => $data,
+                ]
+            );
+
+        } else {
+            return $this->response->setStatusCode(404);
+        }
+    } catch (Exception $e) {
+        return $this->getResponse(
+            [
+                'status' => 'error',
+                'message' => 'Could not find Teknisi',
+            ],
+            ResponseInterface::HTTP_NOT_FOUND
+        );
+    }
+
+  }
+
+  public function getLokasi($gedung)
+  {
+    try {
+
+        $model = new ModelSatu();
+        $data = $model->lokasi($gedung);
+
+        if ($data) {
+
+            return $this->getResponse(
+                [
+                    'status' => 'success',
+                    'data' => $data,
+                ]
+            );
+
+        } else {
+            return $this->response->setStatusCode(404);
+        }
+    } catch (Exception $e) {
+        return $this->getResponse(
+            [
+                'status' => 'error',
+                'message' => 'Could not find Lokasi',
+            ],
+            ResponseInterface::HTTP_NOT_FOUND
+        );
+    }
+
+  }
+
+  public function autoLokasi($like,$gedung)
+  {
+
+    try {
+
+        $model = new ModelSatu();
+        $data = $model->mdlautolokasi($like,$gedung);
+
+        if ($data) {
+
+            return $this->getResponse(
+                [
+                    'status' => 'success',
+                    'data' => $data,
+                ]
+            );
+
+        } else {
+            return $this->response->setStatusCode(404);
+        }
+    } catch (Exception $e) {
+        return $this->getResponse(
+            [
+                'status' => 'error',
+                'message' => 'Could not find Lokasi',
+            ],
+            ResponseInterface::HTTP_NOT_FOUND
+        );
+    }
+
+  }
+
+  public function autoBarang($like,$kode)
+  {
+
+    try {
+
+        $model = new ModelSatu();
+        $data = $model->mdlautobarang($like,$kode);
+
+        if ($data) {
+
+            return $this->getResponse(
+                [
+                    'status' => 'success',
+                    'data' => $data,
+                ]
+            );
+
+        } else {
+            return $this->response->setStatusCode(404);
+        }
+    } catch (Exception $e) {
+        return $this->getResponse(
+            [
+                'status' => 'error',
+                'message' => 'Could not find Barang',
+            ],
+            ResponseInterface::HTTP_NOT_FOUND
+        );
+    }
+
+  }
+  
+  public function autoKeluhan($like,$kategori)
+  {
+
+    try {
+
+        $model = new ModelSatu();
+        $data = $model->mdlautokeluhan($like,$kategori);
+
+        if ($data) {
+
+            return $this->getResponse(
+                [
+                    'status' => 'success',
+                    'data' => $data,
+                ]
+            );
+
+        } else {
+            return $this->response->setStatusCode(404);
+        }
+    } catch (Exception $e) {
+        return $this->getResponse(
+            [
+                'status' => 'error',
+                'message' => 'Could not find Keluhan',
+            ],
+            ResponseInterface::HTTP_NOT_FOUND
+        );
+    }
+
+  }
+
+  public function kirimTiket()
+    {
+        $kodebarang = $this->request->getVar('kodebarang');
+        $namabarang = $this->request->getVar('namabarang');
+        $keluhan = $this->request->getVar('keluhan');
+        $lokasi = $this->request->getVar('lokasi');
+		$gedung = $this->request->getVar('gedung');
+        $pengirim = $this->request->getVar('pengirim');
+        $teknisi = $this->request->getVar('teknisi'); 
+        $statkirim = $this->request->getVar('statuskirim');
+
+        try {
+
+            $rules = [
+                'namabarang' => 'required',
+                'keluhan' => 'required',
+
+            ];
+
+            $errors = [
+                'keluhan' => [
+                    'validateUser' => 'Keluhan credentials provided',
+                ],
+            ];
+
+            $input = $this->getRequestInput($this->request);
+
+            if (!$this->validateRequest($input, $rules, $errors)) {
+                return $this
+                    ->getResponse(
+                        $this->validator->getErrors(),
+                        ResponseInterface::HTTP_BAD_REQUEST
+                    );
+            } else {
+
+                $model = new ModelSatu();
+                $save = $model->kirimtiket($kodebarang,$namabarang,$keluhan,$lokasi,$gedung,$pengirim,$teknisi,$statkirim);
+                if ($save) {
+                    return $this
+                        ->getResponse(
+                            [
+                                'message' => 'Success',
+                            ]
+                        );
+
+                } else {
+                    return $this
+                        ->getResponse(
+                            [
+                                'message' => 'error',
+                            ]
+                        );
+                }
+            }
+        } catch (Exception $exception) {
+            return $this
+                ->getResponse(
+                    [
+                        'error' => true,
+                        'message' => $exception->getMessage(),
+                    ],
+
+                );
+        }
+    }
+	
+	public function getAlltickets($kodebag)
+    {
+        try {
+
+            $model = new ModelSatu();
+            $tikets = $model->alltickets($kodebag);
+
+            if ($tikets) {
+
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $tikets,
+                    ]
+                );
+
+            } else {
+                //   return $this->response->setStatusCode(404);
+                return $this->getResponse(['error' => true, 'message' => 'Could not find All Tickets'])->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find all tickets',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+    }
+
+    public function getTiket($gedung)
+    {
+        try {
+
+            $model = new ModelSatu();
+            $tiket = $model->tiket($gedung);
+
+            if ($tiket) {
+
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $tiket,
+                    ]
+                );
+
+            } else {
+                //   return $this->response->setStatusCode(404);
+                return $this->getResponse(['error' => true, 'message' => 'Could not find Timecard'])->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find tiket',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+    }
+
+    public function getOnesend()
+    {
+        try {
+
+            $model = new ModelSatu();
+            $sender = $model->onesend();
+
+            if ($sender) {
+
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $sender,
+                    ]
+                );
+
+            } else {
+                return $this->response->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find Onesend',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+
+    }
+
+    public function myJobs($pid)
+    {
+        try {
+
+            $model = new ModelSatu();
+            $data = $model->myjobs($pid);
+
+            if ($data) {
+
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $data,
+                    ]
+                );
+
+            } else {
+                return $this->getResponse(['error' => true, 'message' => 'Could not find MyJobs'])->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find MyJobs',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+
+    }
+
+    public function getTiketaction($no)
+    {
+    	try {
+
+         $model = new ModelSatu();
+         $data = $model->tiketaction($no);
+
+        if ($data) {
+
+            return $this->getResponse(
+                [
+                    'status' => 'success',
+                    'data' => $data,
+                ]
+            );
+
+        } else {
+            return $this->response->setStatusCode(404);
+        }
+    } catch (Exception $e) {
+        return $this->getResponse(
+            [
+                'status' => 'error',
+                'message' => 'Could not find ticket detail',
+            ],
+            ResponseInterface::HTTP_NOT_FOUND
+        );
+    }
+
+  }
+
+    public function tiketStart()
+    {
+        $no = $this->request->getVar('nomor');
+
+        try {
+
+            $rules = [
+                'nomor' => 'required',
+
+            ];
+
+            $input = $this->getRequestInput($this->request);
+
+            if (!$this->validateRequest($input, $rules)) {
+                return $this
+                    ->getResponse(
+                        $this->validator->getErrors(),
+                        ResponseInterface::HTTP_BAD_REQUEST
+                    );
+            } else {
+
+                $model = new ModelSatu();
+                $update = $model->tiketstart($no);
+                if ($update>0) {
+                    return $this
+                        ->getResponse(
+                            [
+				'error' => false,
+                                'message' => 'Success',
+                            ]
+                        );
+
+                } else {
+                    return $this
+                        ->getResponse(
+                            [
+				'error' => true,
+                                'message' => 'error',
+                            ]
+                        );
+                }
+            }
+        } catch (Exception $exception) {
+            return $this
+                ->getResponse(
+                    [
+                        'error' => true,
+                        'message' => $exception->getMessage(),
+                    ],
+
+                );
+        }
+    }
+
+	public function tiketDelete()
+    {
+        $no = $this->request->getVar('nomor');
+
+        try {
+
+            $rules = [
+                'nomor' => 'required',
+
+            ];
+
+            $input = $this->getRequestInput($this->request);
+
+            if (!$this->validateRequest($input, $rules)) {
+                return $this
+                    ->getResponse(
+                        $this->validator->getErrors(),
+                        ResponseInterface::HTTP_BAD_REQUEST
+                    );
+            } else {
+
+                $model = new ModelSatu();
+                $update = $model->tiketdelete($no);
+                if ($update>0) {
+                    return $this
+                        ->getResponse(
+                            [
+				'error' => false,
+                                'message' => 'Success',
+                            ]
+                        );
+
+                } else {
+                    return $this
+                        ->getResponse(
+                            [
+				'error' => true,
+                                'message' => 'error',
+                            ]
+                        );
+                }
+            }
+        } catch (Exception $exception) {
+            return $this
+                ->getResponse(
+                    [
+                        'error' => true,
+                        'message' => $exception->getMessage(),
+                    ],
+
+                );
+        }
+    }
+	
+	public function tiketClose()
+    {
+        $no = $this->request->getVar('nomor');
+		$ket = $this->request->getVar('ket');
+        try {
+
+            $rules = [
+                'nomor' => 'required',
+
+            ];
+
+            $input = $this->getRequestInput($this->request);
+
+            if (!$this->validateRequest($input, $rules)) {
+                return $this
+                    ->getResponse(
+                        $this->validator->getErrors(),
+                        ResponseInterface::HTTP_BAD_REQUEST
+                    );
+            } else {
+
+                $model = new ModelSatu();
+                $update = $model->tiketclose($no,$ket);
+                if ($update>0) {
+                    return $this
+                        ->getResponse(
+                            [
+								'error' => false,
+                                'message' => 'Success',
+                            ]
+                        );
+
+                } else {
+                    return $this
+                        ->getResponse(
+                            [
+				'error' => true,
+                                'message' => 'error',
+                            ]
+                        );
+                }
+            }
+        } catch (Exception $exception) {
+            return $this
+                ->getResponse(
+                    [
+                        'error' => true,
+                        'message' => $exception->getMessage(),
+                    ],
+
+                );
+        }
+    }
+    
+
+    public function getTiketOpen($pid)
+    {
+        try {
+
+            $model = new ModelSatu();
+            $data = $model->tiketopen($pid);
+
+            if ($data) {
+
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $data,
+                    ]
+                );
+
+            } else {
+                return $this->getResponse(['error' => true, 'message' => 'Could not find Tiket Open'])->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find Open Tiket',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+
+    }
+	
+	public function getTiketClosing($no)
+    {
+        try {
+
+            $model = new ModelSatu();
+            $data = $model->closetiket($no);
+
+            if ($data) {
+
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $data,
+                    ]
+                );
+
+            } else {
+                return $this->getResponse(['error' => true, 'message' => 'Could not find Tiket Closing'])->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find Tiket Closing',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+
+    }
+	
+
+    public function getInfo()
+    {
+        try {
+
+            $model = new ModelSatu();
+            $data = $model->info();
+
+            if ($data) {
+
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $data,
+                    ]
+                );
+
+            } else {
+                return $this->getResponse(['error' => true, 'message' => 'Could not find Info'])->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find info',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+    }
+
+
+	
+  
+    public function getInfostaf()
+    {
+        try {
+
+            $model = new ModelDua();
+            $data = $model->infostaf();
+
+            if ($data) {
+
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $data,
+                    ]
+                );
+
+            } else {
+                return $this->getResponse(['error' => true, 'message' => 'Could not find Info'])->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find info',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+
+    }
+
+    public function getGajiop($pid, $kodepr)
+    {
+        try {
+
+            $model = new ModelSatu();
+            $data = $model->gajiop($pid, $kodepr);
+
+            if ($data["kodepr"]!=null) {
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $data,
+                    ]
+                );
+
+            } else {
+                return $this->getResponse(['error' => true, 'message' => 'Could not find Gaji'])->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find gajiop',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+
+    }
+
+    public function getSaran($pid)
+    {
+        try {
+
+            $model = new ModelSatu();
+            $data = $model->saran($pid);
+
+            if ($data) {
+
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $data,
+                    ]
+                );
+
+            } else {
+                return $this->getResponse(['error' => true, 'message' => 'Could not find Saran'])->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find info',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+
+    }
+
+    public function kirimSaran()
+    {
+        $pid = $this->request->getVar('pid');
+        $isi = $this->request->getVar('isi');
+
+        try {
+
+            $rules = [
+                'pid' => 'required',
+                'isi' => 'required',
+            ];
+
+            $errors = [
+                'pid' => [
+                    'validateUser' => 'Invalid Pid credentials provided',
+                ],
+            ];
+
+            $input = $this->getRequestInput($this->request);
+
+            if (!$this->validateRequest($input, $rules, $errors)) {
+                return $this
+                    ->getResponse(
+                        $this->validator->getErrors(),
+                        ResponseInterface::HTTP_BAD_REQUEST
+                    );
+            } else {
+
+                $model = new ModelSatu();
+                $update = $model->kirimsaran($pid, $isi);
+                if ($update) {
+                    return $this
+                        ->getResponse(
+                            [
+                                'message' => 'Success',
+                            ]
+                        );
+
+                } else {
+                    return $this
+                        ->getResponse(
+                            [
+                                'message' => 'error',
+                            ]
+                        );
+                }
+            }
+        } catch (Exception $exception) {
+            return $this
+                ->getResponse(
+                    [
+                        'error' => true,
+                        'message' => $exception->getMessage(),
+                    ],
+
+                );
+        }
+    }
+
+    public function getCutistaf($pid)
+    {
+        try {
+
+            $model = new ModelSatu();
+            $data = $model->cutistaf($pid);
+
+            if ($data) {
+
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $data,
+                    ]
+                );
+
+            } else {
+                return $this->getResponse(['error' => true, 'message' => 'Could not find Cuti'])->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find Cuti',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+    }
+
+    public function getGajistaf($pid, $token, $kodepr)
+    {
+        try {
+
+            $model = new ModelDua();
+            $data = $model->gajistaf($pid, $token, $kodepr);
+
+            if ($data) {
+
+                return $this->getResponse(
+                    [
+                        'status' => 'success',
+                        'data' => $data,
+                    ]
+                );
+
+            } else {
+                return $this->getResponse(['error' => true, 'message' => 'Could not find Gaji'])->setStatusCode(404);
+            }
+        } catch (Exception $e) {
+            return $this->getResponse(
+                [
+                    'status' => 'error',
+                    'message' => 'Could not find gajistaf',
+                ],
+                ResponseInterface::HTTP_NOT_FOUND
+            );
+        }
+
+    }
+
+      public function absenMasuk()
+
+      {
+        $pid = $this->request->getVar('pid');
+
+        try {
+
+            $rules = [
+                'pid' => 'required',
+            ];
+
+            $errors = [
+                'pid' => [
+                    'validateUser' => 'Invalid Pid credentials provided',
+                ],
+            ];
+
+            $input = $this->getRequestInput($this->request);
+
+            if (!$this->validateRequest($input, $rules, $errors)) {
+                return $this
+                    ->getResponse(
+                        $this->validator->getErrors(),
+                        ResponseInterface::HTTP_BAD_REQUEST
+                    );
+            } else {
+
+ 		$model = new ModelTiga();
+                $update = $model->cekin($pid);
+                return $this->getResponse(['message'=>$update,'error'=>false]);
+
+            }
+        } catch (Exception $exception) {
+            return $this
+                ->getResponse(
+                    [
+                        'error' => true,
+                        'message' => $exception->getMessage(),
+                    ],
+
+                );
+        }
+    }
+
+
+    public function absenPulang()
+    {
+        $pid = $this->request->getVar('pid');
+
+        try {
+
+            $rules = [
+                'pid' => 'required',
+            ];
+
+            $errors = [
+                'pid' => [
+                    'validateUser' => 'Invalid Pid credentials provided',
+                ],
+            ];
+
+            $input = $this->getRequestInput($this->request);
+
+            if (!$this->validateRequest($input, $rules, $errors)) {
+                return $this
+                    ->getResponse(
+                        $this->validator->getErrors(),
+                        ResponseInterface::HTTP_BAD_REQUEST
+                    );
+            } else {
+
+                $model = new ModelTiga();
+                $update = $model->cekout($pid);
+		return $this->getResponse(['message'=>$update,'error'=>false]);
+           }
+        } catch (Exception $exception) {
+            return $this
+                ->getResponse(
+                    [
+                        'error' => true,
+                        'message' => $exception->getMessage(),
+                    ],
+
+                );
+        }
+    }
+
+}
+
+
+
+=================
+$routes->get('teknisi/(:any)/(:any)','Api::getTeknisi/$1/$2');
+$routes->get('personal/(:any)','Api::getPersonal/$1/$2');
+$routes->get('lokasi/(:any)','Api::getLokasi/$1');
+$routes->get('atlokasi/(:any)','Api::autoLokasi/$1/$2');
+$routes->get('atbarang/(:any)','Api::autoBarang/$1/$2');
+$routes->get('atkeluhan/(:any)','Api::autoKeluhan/$1/$2');
+$routes->get('tiket/(:any)', 'Api::getTiket/$1');
+$routes->get('onesend', 'Api::getOnesend');
+$routes->get('alltickets/(:any)', 'Api::getAlltickets/$1');
+$routes->get('myjobs/(:any)', 'Api::myJobs/$1');
+$routes->get('tiketaction/(:any)', 'Api::getTiketAction/$1');
+$routes->get('tiketopen/(:any)', 'Api::getTiketOpen/$1');
+$routes->get('tiketclosing/(:any)', 'Api::getTiketClosing/$1');
+$routes->get('versi', 'Api::getVersi');
+$routes->post('kirimtiket', 'Api::kirimTiket');
+$routes->put('tiketstart', 'Api::tiketStart');
+$routes->put('tiketclose', 'Api::tiketClose');
+$routes->delete('tiketdelete', 'Api::tiketDelete');
+
+
+=============
+
+
+
+
+
